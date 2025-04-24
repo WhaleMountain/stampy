@@ -7,12 +7,10 @@ const SLACK_VERIFICATION_TOKEN = props.SLACK_VERIFICATION_TOKEN;
 // Slack Event API
 function doPost(event) {
   const payload = JSON.parse(event.postData.getDataAsString());
-  if (payload.type === "url_verification") {
-    return ContentService.createTextOutput(JSON.stringify(payload.challenge));
-  }
-  if (payload.token !== SLACK_VERIFICATION_TOKEN) return;
-  if (payload.event.item.type !== 'message') return;
-  if (payload.event.reaction !== 'robot_face') return;
+  if (payload.type === "url_verification") return ContentService.createTextOutput(JSON.stringify(payload.challenge));
+  if (payload.token !== SLACK_VERIFICATION_TOKEN) return ContentService.createTextOutput("invalid request");
+  if (payload.event.item.type !== 'message') return ContentService.createTextOutput("unsupported item type");
+  if (payload.event.reaction !== 'robot_face') return ContentService.createTextOutput("unsupported reaction type");
 
   const channel = payload.event.item.channel;
   const ts = payload.event.item.ts;
